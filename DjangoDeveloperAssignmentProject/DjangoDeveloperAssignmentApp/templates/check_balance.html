@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Deduct Amount</title>
+    <title>Check Balance</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -21,9 +21,27 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             width: 300px;
             margin: 0 auto;
-            text-align: center; /* Center align the form contents */
         }
-        .transaction-details {
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .balance-details {
             background-color: #fff;
             padding: 20px;
             border: 1px solid #ccc;
@@ -31,15 +49,10 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             width: 300px;
             margin: 20px auto;
-            text-align: center; /* Center align the transaction details */
         }
-        .button-container {
-            margin-top: 10px;
-            text-align: center; /* Center align the buttons */
-        }
-        .button-container a {
+        .link {
             display: inline-block;
-            margin: 0 10px; /* Add margin around buttons for spacing */
+            margin-top: 10px;
             padding: 8px 16px;
             background-color: #4CAF50;
             color: white;
@@ -47,27 +60,26 @@
             text-decoration: none;
             border-radius: 4px;
         }
-        .button-container a:hover {
+        .link:hover {
             background-color: #45a049;
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('form').on('submit', function(event) {
+            $('#check-balance-form').on('submit', function(event) {
                 event.preventDefault();
+                var userId = $('#user-id').val();
                 $.ajax({
-                    url: "{% url 'deduct_amount' %}",
-                    type: "POST",
-                    data: $(this).serialize(),
+                    url: "{% url 'get_user_balance_api' %}",
+                    type: "GET",
+                    data: { user_id: userId },
                     success: function(response) {
                         if (response.status) {
-                            $('.transaction-details').html(`
-                                <h2>Transaction Details</h2>
-                                <p><strong>User ID:</strong> ${response.transaction.user_id}</p>
-                                <p><strong>Amount:</strong> ${response.transaction.amount}</p>
-                                <p><strong>Transaction ID:</strong> ${response.transaction.transaction_id}</p>
-                                <p><strong>New Balance:</strong> ${response.new_balance}</p>
+                            $('.balance-details').html(`
+                                <h2>Balance Details</h2>
+                                <p><strong>User ID:</strong> ${userId}</p>
+                                <p><strong>Balance:</strong> ${response.balance}</p>
                             `);
                         } else {
                             alert(response.error);
@@ -82,17 +94,14 @@
     </script>
 </head>
 <body>
-    <h1>Deduct Amount</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <div class="button-container">
-            <button type="submit">Deduct Amount</button>
-            <a href="{% url 'topup' %}">Register a New Top-up</a>
-            <a href="{% url 'check_balance_view' %}">Check Balance</a>
-        </div>
+    <form id="check-balance-form" method="get">
+        <label for="user-id">User ID</label>
+        <input type="text" id="user-id" name="user_id" required>
+        <button type="submit">Check Balance</button>
+        <a href="{% url 'deduct_amount' %}" class="link">Deduct Amount</a>
+
     </form>
-    <div class="transaction-details">
+    <div class="balance-details">
     </div>
 </body>
 </html>

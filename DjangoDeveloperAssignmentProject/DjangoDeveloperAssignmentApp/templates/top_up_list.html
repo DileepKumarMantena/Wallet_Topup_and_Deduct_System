@@ -60,10 +60,13 @@
                 <td>{{ transaction.user_id }}</td>
                 <td>{{ transaction.amount }}</td>
                 <td>{{ transaction.timestamp }}</td>
+                <td>{{ transaction.transaction_id }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
     <a href="{% url 'topup' %}">Register a New Top-up</a>
+    <a href="{% url 'deduct_amount' %}">Deduct Top-up</a>
+
 </body>
 </html>
