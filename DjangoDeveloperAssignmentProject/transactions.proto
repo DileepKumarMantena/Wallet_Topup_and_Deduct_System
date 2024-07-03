@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package transactions;
+
+service TransactionService {
+    rpc Topup(TopupRequest) returns (TopupResponse);
+    rpc Deduct(DeductRequest) returns (DeductResponse);
+    rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse);
+}
+
+message TopupRequest {
+    string user_id = 1;
+    float amount = 2;
+}
+
+message TopupResponse {
+    bool status = 1;
+    float new_balance = 2;
+    string transaction_id = 3;
+}
+
+message DeductRequest {
+    string user_id = 1;
+    float amount = 2;
+}
+
+message DeductResponse {
+    bool status = 1;
+    float new_balance = 2;
+    string transaction_id = 3;
+}
+
+message GetBalanceRequest {
+    string user_id = 1;
+}
+
+message GetBalanceResponse {
+    float balance = 1;
+}
